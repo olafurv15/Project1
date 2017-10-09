@@ -1,17 +1,9 @@
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 import numpy as np
 
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
-from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import precision_score, recall_score
+from sklearn.model_selection import KFold
 from scipy import stats
-from sklearn import tree
 from sklearn.feature_selection import SelectKBest, chi2
-from sklearn import preprocessing
 from sklearn.naive_bayes import GaussianNB
-from sklearn.neighbors import KNeighborsClassifier
 
 class NaiveBayes:
     def __init__(self, X_train, y_train, X_test, y_test):

@@ -1,22 +1,9 @@
 import pandas as pd
-from Knn import Knn
-from DecisionTree import DecisionTree
-from NaiveBayes import NaiveBayes
-import seaborn as sns
-import matplotlib.pyplot as plt
-import numpy as np
-
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
-from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import precision_score, recall_score
-from scipy import stats
-from sklearn import tree
-from sklearn.feature_selection import SelectKBest, chi2
 from sklearn import preprocessing
-from sklearn.naive_bayes import GaussianNB
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
 
-import sys
+from Classifiers.NaiveBayes import NaiveBayes
+
 
 def preProcessingData(data, targetString):
 

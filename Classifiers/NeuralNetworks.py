@@ -7,8 +7,13 @@ from scipy import stats
 class NeuralNetworks:
 
     def __init__(self, X_train, y_train, X_test, y_test):
+        self.X_train = X_train
+        self.y_train = y_train
+        self.X_test = X_test
+        self.y_test = y_test
+
         self.activationFunctions = ['identity', 'logistic', 'tanh', 'relu']
-        self.earningRates = np.arange(0.0001, 0.01, 0.0001)
+        self.learningRates = np.arange(0.0001, 0.01, 0.0001)
         self.kf = KFold(n_splits=2)
 
         self.resTrainAccuracy2 = []
