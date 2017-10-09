@@ -42,3 +42,6 @@ class Knn:
         clf = KNeighborsClassifier(n_neighbors=self.optimal_k)
         clf.fit(self.X_train, self.y_train)
         return clf.score(self.X_test, self.y_test)
+
+    def printScoreAndParam(self):
+        pass
