@@ -30,7 +30,7 @@ class NeuralNetworks:
 
         scoring = 'accuracy'
 
-        gs = GridSearchCV(estimator=pipe, param_grid=param_grid, scoring=scoring, cv=2)
+        gs = GridSearchCV(estimator=pipe, param_grid=param_grid, scoring=scoring, cv=20)
         gs.fit(self.X_train, self.y_train)
 
         self.bestActivation = gs.best_params_['clf__activation']

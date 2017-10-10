@@ -12,7 +12,7 @@ class Knn:
         self.score = 0
 
         # creating list of K for KNN
-        self.neighbors = list(range(1, 31))
+        self.neighbors = list(range(1, 201))
         # take every other number
         self.neighbors = self.neighbors[::2]
 
@@ -30,7 +30,7 @@ class Knn:
         for k in self.neighbors:
             # build the model
             knn = KNeighborsClassifier(n_neighbors=k)
-            scores = cross_val_score(knn, self.X_train, self.y_train, cv=2, scoring='accuracy')
+            scores = cross_val_score(knn, self.X_train, self.y_train, cv=20, scoring='accuracy')
 
             # record accuracy
             self.cv_scores.append(scores.mean())

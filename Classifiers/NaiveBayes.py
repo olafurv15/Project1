@@ -28,7 +28,7 @@ class NaiveBayes:
         param_grid = [{'feat__k': self.kValues}]
         scoring = 'accuracy'
 
-        gs = GridSearchCV(estimator=pipe, param_grid=param_grid, scoring=scoring, cv=2)
+        gs = GridSearchCV(estimator=pipe, param_grid=param_grid, scoring=scoring, cv=20)
         gs.fit(self.X_train, self.y_train)
 
         self.best_k = gs.best_params_['feat__k']
