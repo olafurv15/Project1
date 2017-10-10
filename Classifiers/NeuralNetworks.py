@@ -50,5 +50,5 @@ class NeuralNetworks:
     def printBestScoreAndParam(self):
         print("\nNeural Networks\n-------------------\n" +
               "Best Learning Rate: " + str(self.bestLearningRate) + "\n"+
-              "Best Activation: " + str(self.bestActivation) + "\n" +
+              "Best Activation function: " + str(self.bestActivation) + "\n" +
               "Score: " + str(self.score) + "\n")

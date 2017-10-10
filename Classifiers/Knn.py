@@ -54,6 +54,6 @@ class Knn:
         return "K-nearest neighbour"
 
     def printBestScoreAndParam(self):
-        print("\nKnn\n-------------------\n" +
-              "Best n neighbors parameter: " + str(self.optimal_k) + "\n"+
+        print("\nK-Nearest Neighbor\n-------------------\n" +
+              "Best N neighbors parameter: " + str(self.optimal_k) + "\n"+
               "Score: " + str(self.score) + "\n")

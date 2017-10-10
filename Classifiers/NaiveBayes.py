@@ -33,8 +33,6 @@ class NaiveBayes:
 
         self.best_k = gs.best_params_['feat__k']
 
-        print(gs.grid_scores_)
-
     def computeScore(self):
         feature_selector = SelectKBest(chi2, k=self.best_k)
         X_train_trans = feature_selector.fit_transform(self.X_train, self.y_train)

@@ -48,7 +48,6 @@ def splittingDataAndNormalize(data, target):
     X_train_std = std_scale.transform(X_train)
     X_test_std = std_scale.transform(X_test)
 
-    #X_train_std = X_train_std.as_matrix()
     y_train = y_train.as_matrix()
 
     return X_train_std, X_test_std, y_train, y_test
@@ -62,18 +61,17 @@ if __name__ == "__main__":
     # splitting data.
     X_train, X_test, y_train, y_test = splittingDataAndNormalize(data, target)
 
-    #knn = Knn(X_train, y_train, X_test, y_test)
-    #tree = DecisionTree(X_train, y_train, X_test, y_test)
-    #bayes = NaiveBayes(X_train, y_train, X_test, y_test)
+    knn = Knn(X_train, y_train, X_test, y_test)
+    tree = DecisionTree(X_train, y_train, X_test, y_test)
+    bayes = NaiveBayes(X_train, y_train, X_test, y_test)
     neural = NeuralNetworks(X_train, y_train, X_test, y_test)
 
-    #knn.printBestScoreAndParam()
-    #tree.printBestScoreAndParam()
-    #bayes.printBestScoreAndParam()
+    knn.printBestScoreAndParam()
+    tree.printBestScoreAndParam()
+    bayes.printBestScoreAndParam()
     neural.printBestScoreAndParam()
 
-    #classifiers = [["knn", knn.getScore()], [tree.getScore()], [bayes, bayes.getScore()], [neural, neural.getScore()]]
-    classifiers = [["knn", 1], ["tree", 4], ["bayes", 10], ["neural", 5]]
+    classifiers = [[knn, knn.getScore()], [bayes, bayes.getScore()], [tree, tree.getScore()], [neural, neural.getScore()]]
 
     result = 0
     bestClassifier = ""
@@ -82,8 +80,9 @@ if __name__ == "__main__":
             result = i[1]
             bestClassifier = i[0]
 
-    #print("The best classifier for this dataset is:" + bestClassifier.getClassifierName() +
-    #      ".\nWith score: " + str(result))
+    print("\nFinal Result\n-------------------\n"+
+            "The best classifier for this dataset is: " + bestClassifier.getClassifierName() +
+            ".\nWith score: " + str(result))
 
 
 
