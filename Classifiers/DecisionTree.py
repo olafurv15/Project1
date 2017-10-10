@@ -23,7 +23,7 @@ class DecisionTree:
         self.min_splitValues = np.arange(2, 1000, 10)
 
         self.getOptimalParameters()
-        self.getScore()
+        self.computeScore()
 
     def getOptimalParameters(self):
         pipe = Pipeline([('feat', self.top_feat),
@@ -41,7 +41,7 @@ class DecisionTree:
         self.bestMinSplitParam = gs.best_params_['clf__min_samples_split']
 
 
-    def getScore(self):
+    def computeScore(self):
         # select features
         feature_selector = SelectKBest(chi2, k=self.bestK)
         x_cv_train = feature_selector.fit_transform(self.X_train, self.y_train)
@@ -51,6 +51,12 @@ class DecisionTree:
         dt = tree.DecisionTreeClassifier(min_samples_split=self.bestMinSplitParam)
         dt.fit(x_cv_train, self.y_train)
         self.score = dt.score(x_cv_test, self.y_test)
+
+    def getScore(self):
+        return self.score
+
+    def getClassifierName(self):
+        return "Decision Tree"
 
 
     def printBestScoreAndParam(self):

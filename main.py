@@ -53,6 +53,7 @@ def splittingDataAndNormalize(data, target):
 
     return X_train_std, X_test_std, y_train, y_test
 
+
 if __name__ == "__main__":
     NbaShots = pd.read_csv('Data/shot_logs.csv')
 
@@ -61,15 +62,31 @@ if __name__ == "__main__":
     # splitting data.
     X_train, X_test, y_train, y_test = splittingDataAndNormalize(data, target)
 
-    knn = Knn(X_train, y_train, X_test, y_test)
+    #knn = Knn(X_train, y_train, X_test, y_test)
     #tree = DecisionTree(X_train, y_train, X_test, y_test)
     #bayes = NaiveBayes(X_train, y_train, X_test, y_test)
-    #neural = NeuralNetworks(X_train, y_train, X_test, y_test)
+    neural = NeuralNetworks(X_train, y_train, X_test, y_test)
 
-    knn.printBestScoreAndParam()
-    #bayes.printBestScoreAndParam()
+    #knn.printBestScoreAndParam()
     #tree.printBestScoreAndParam()
-    #neural.printBestScoreAndParam()
+    #bayes.printBestScoreAndParam()
+    neural.printBestScoreAndParam()
+
+    #classifiers = [["knn", knn.getScore()], [tree.getScore()], [bayes, bayes.getScore()], [neural, neural.getScore()]]
+    classifiers = [["knn", 1], ["tree", 4], ["bayes", 10], ["neural", 5]]
+
+    result = 0
+    bestClassifier = ""
+    for i in classifiers:
+        if i[1] > result:
+            result = i[1]
+            bestClassifier = i[0]
+
+    #print("The best classifier for this dataset is:" + bestClassifier.getClassifierName() +
+    #      ".\nWith score: " + str(result))
+
+
+
 
 
 

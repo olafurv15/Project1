@@ -17,7 +17,7 @@ class NaiveBayes:
         self.best_k = 0
 
         self.getOptimalKParameter()
-        self.getScore()
+        self.computeScore()
 
     def getOptimalKParameter(self):
         top_feat = SelectKBest(chi2)
@@ -35,7 +35,7 @@ class NaiveBayes:
 
         print(gs.grid_scores_)
 
-    def getScore(self):
+    def computeScore(self):
         feature_selector = SelectKBest(chi2, k=self.best_k)
         X_train_trans = feature_selector.fit_transform(self.X_train, self.y_train)
         X_test_trans = feature_selector.transform(self.X_test)
@@ -44,6 +44,11 @@ class NaiveBayes:
         clf.fit(X_train_trans, self.y_train)
         self.score = clf.score(X_test_trans, self.y_test)
 
+    def getScore(self):
+        return self.score
+
+    def getClassifierName(self):
+        return "Naive Bayes"
 
     def printBestScoreAndParam(self):
         print("\nNaive Bayes\n-------------------\n" +

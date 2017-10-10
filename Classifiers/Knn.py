@@ -21,7 +21,7 @@ class Knn:
 
         self.crossValidation()
         self.optimal_k = self.findOptimal_k()
-        self.getScore()
+        self.computeScore()
 
 
     def crossValidation(self):
@@ -42,12 +42,18 @@ class Knn:
         # best k.
         return self.neighbors[MSE.index(min(MSE))]
 
-    def getScore(self):
+    def computeScore(self):
         clf = KNeighborsClassifier(n_neighbors=self.optimal_k)
         clf.fit(self.X_train, self.y_train)
         self.score = clf.score(self.X_test, self.y_test)
 
+    def getScore(self):
+        return self.score
+
+    def getClassifierName(self):
+        return "K-nearest neighbour"
+
     def printBestScoreAndParam(self):
         print("\nKnn\n-------------------\n" +
-              "Best K: " + str(self.optimal_k) + "\n"+
+              "Best n neighbors parameter: " + str(self.optimal_k) + "\n"+
               "Score: " + str(self.score) + "\n")

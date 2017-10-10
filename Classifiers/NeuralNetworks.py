@@ -20,7 +20,7 @@ class NeuralNetworks:
         self.network = MLPClassifier()
 
         self.getOptimalParameters()
-        self.getScore()
+        self.computeScore()
 
     def getOptimalParameters(self):
         pipe = Pipeline([('clf', self.network)])
@@ -36,11 +36,16 @@ class NeuralNetworks:
         self.bestActivation = gs.best_params_['clf__activation']
         self.bestLearningRate = gs.best_params_['clf__learning_rate_init']
 
-
-    def getScore(self):
+    def computeScore(self):
         network = MLPClassifier(learning_rate_init=self.bestLearningRate, activation=self.bestActivation)
         network.fit(self.X_train, self.y_train)
         self.score = network.score(self.X_test, self.y_test)
+
+    def getScore(self):
+        return self.score
+
+    def getClassifierName(self):
+        return "Neural Networks"
 
     def printBestScoreAndParam(self):
         print("\nNeural Networks\n-------------------\n" +
