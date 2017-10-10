@@ -1,12 +1,15 @@
 from sklearn.model_selection import cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 
+
 class Knn:
     def __init__(self, X_train, y_train, X_test, y_test):
         self.X_train = X_train
         self.y_train = y_train
         self.X_test = X_test
         self.y_test = y_test
+
+        self.score = 0
 
         # creating list of K for KNN
         self.neighbors = list(range(1, 31))
@@ -18,6 +21,7 @@ class Knn:
 
         self.crossValidation()
         self.optimal_k = self.findOptimal_k()
+        self.getScore()
 
 
     def crossValidation(self):
@@ -41,7 +45,9 @@ class Knn:
     def getScore(self):
         clf = KNeighborsClassifier(n_neighbors=self.optimal_k)
         clf.fit(self.X_train, self.y_train)
-        return clf.score(self.X_test, self.y_test)
+        self.score = clf.score(self.X_test, self.y_test)
 
-    def printScoreAndParam(self):
-        pass
+    def printBestScoreAndParam(self):
+        print("\nKnn\n-------------------\n" +
+              "Best K: " + str(self.optimal_k) + "\n"+
+              "Score: " + str(self.score) + "\n")

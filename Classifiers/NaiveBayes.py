@@ -1,25 +1,23 @@
-from sklearn.model_selection import KFold
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.naive_bayes import GaussianNB
 from sklearn.pipeline import Pipeline
 from sklearn.grid_search import GridSearchCV
 
 class NaiveBayes:
-    # baeta við kfold i parameters?
+
     def __init__(self, X_train, y_train, X_test, y_test):
         self.X_train = X_train
         self.y_train = y_train
         self.X_test = X_test
         self.y_test = y_test
 
-        self.kValues = list(range(1, len(self.X_train[0]) + 1)) # telja columns i x_train
-        self.kFold = KFold(n_splits=2)
+        self.kValues = list(range(1, len(self.X_train[0]) + 1))
 
-        self.grid_scores = ""
-        self.best_score = ""
-        self.best_params = ""
+        self.score = 0
+        self.best_k = 0
 
         self.getOptimalKParameter()
+        self.getScore()
 
     def getOptimalKParameter(self):
         top_feat = SelectKBest(chi2)
@@ -33,12 +31,21 @@ class NaiveBayes:
         gs = GridSearchCV(estimator=pipe, param_grid=param_grid, scoring=scoring, cv=2)
         gs.fit(self.X_train, self.y_train)
 
-        self.grid_scores = gs.grid_scores_
+        self.best_k = gs.best_params_['feat__k']
 
-        self.best_score = gs.best_score_
-        self.best_params = gs.best_params_
+        print(gs.grid_scores_)
+
+    def getScore(self):
+        feature_selector = SelectKBest(chi2, k=self.best_k)
+        X_train_trans = feature_selector.fit_transform(self.X_train, self.y_train)
+        X_test_trans = feature_selector.transform(self.X_test)
+
+        clf = GaussianNB(priors=None)
+        clf.fit(X_train_trans, self.y_train)
+        self.score = clf.score(X_test_trans, self.y_test)
+
 
     def printBestScoreAndParam(self):
-        print("Naive Bayes\n------------\n" +
-              "Best Parameter: " + str(self.best_params) + "\n"+
-              "Best Score: " + str(self.best_score) + "\n")
+        print("\nNaive Bayes\n-------------------\n" +
+              "Best K Parameter: " + str(self.best_k) + "\n" +
+              "Score: " + str(self.score) + "\n")

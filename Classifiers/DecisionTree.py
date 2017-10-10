@@ -1,9 +1,9 @@
 import numpy as np
 
-from sklearn.model_selection import KFold
-from scipy import stats
 from sklearn import tree
 from sklearn.feature_selection import SelectKBest, chi2
+from sklearn.pipeline import Pipeline
+from sklearn.grid_search import GridSearchCV
 
 class DecisionTree:
     def __init__(self, X_train, y_train, X_test, y_test):
@@ -11,90 +11,50 @@ class DecisionTree:
         self.y_train = y_train
         self.X_test = X_test
         self.y_test = y_test
-        #                                   var i 1000
-        self.min_splitValues = np.arange(2, 100, 10)
 
-        self.resTrainAccuracy4 = []
-        self.resValidAccuracy4 = []
-        self.resTrainError4 = []
-        self.resValidError4 = []
+        self.bestK = 0
+        self.bestMinSplitParam = 0
+        self.score = 0
 
-        self.kf = KFold(n_splits=2)
+        self.top_feat = SelectKBest(chi2)
+        self.clfDTree = tree.DecisionTreeClassifier()
 
-        self.getSplitParameterWithCrossValidation()
-        #
-        self.kBest = np.arange(1, 10, 1)
-        self.resTrainAccuracy5 = []
-        self.resValidAccuracy5 = []
-        self.resTrainError5 = []
-        self.resValidError5 = []
+        self.kValues = np.arange(1, 10, 1)
+        self.min_splitValues = np.arange(2, 1000, 10)
 
-    def getSplitParameterWithCrossValidation(self):
-        for splitParameter in self.min_splitValues:
-            trainAccuracy = []
-            validationAccuracy = []
+        self.getOptimalParameters()
+        self.getScore()
 
-            for train_index, test_index in self.kf.split(self.X_train):
-                x_cv_train = [self.X_train[i] for i in train_index]
-                y_cv_train = [self.y_train[i] for i in train_index]
-                x_cv_test = [self.X_train[i] for i in test_index]
-                y_cv_test = [self.y_train[i] for i in test_index]
+    def getOptimalParameters(self):
+        pipe = Pipeline([('feat', self.top_feat),
+                         ('clf', self.clfDTree)])
 
-                # train decision tree
-                dt = tree.DecisionTreeClassifier(min_samples_split=splitParameter)
-                dt.fit(x_cv_train, y_cv_train)
+        param_grid = [{'feat__k': self.kValues,
+                       'clf__min_samples_split': self.min_splitValues}]
 
-                param = dt.get_params()
+        scoring = 'accuracy'
 
-                # add the results to a lost
-                trainAccuracy.append(dt.score(x_cv_train, y_cv_train))
-                validationAccuracy.append(dt.score(x_cv_test, y_cv_test))
+        gs = GridSearchCV(estimator=pipe, param_grid=param_grid, scoring=scoring, cv=2)
+        gs.fit(self.X_train, self.y_train)
 
-            self.resTrainAccuracy4.append(np.mean(trainAccuracy) * 100)
-            self.resValidAccuracy4.append(np.mean(validationAccuracy) * 100)
-            self.resTrainError4.append(stats.sem(trainAccuracy) * 100)
-            self.resValidError4.append(stats.sem(validationAccuracy) * 100)
+        self.bestK = gs.best_params_['feat__k']
+        self.bestMinSplitParam = gs.best_params_['clf__min_samples_split']
 
-    def getKBestWithCrossValidation(self):
-        for kParameter in self.kBest:
-            trainAccuracy = []
-            validationAccuracy = []
-
-            for train_index, test_index in self.kf.split(self.X_train):
-                # print("splitting data")
-                x_cv_train = [self.X_train[i] for i in train_index]
-                y_cv_train = [self.y_train[i] for i in train_index]
-                x_cv_test = [self.X_train[i] for i in test_index]
-                y_cv_test = [self.y_train[i] for i in test_index]
-
-                # select features
-                k = kParameter
-                feature_selector = SelectKBest(chi2, k=kParameter)
-                x_cv_train = feature_selector.fit_transform(x_cv_train, y_cv_train)
-                x_cv_test = feature_selector.transform(x_cv_test)
-
-                # train decision tree
-                dt = tree.DecisionTreeClassifier()
-                dt.fit(x_cv_train, y_cv_train)
-
-                # add the results to a list
-                trainAccuracy.append(dt.score(x_cv_train, y_cv_train))
-                validationAccuracy.append(dt.score(x_cv_test, y_cv_test))
-
-            # Calculate the means, stderror for each cross validation and add to  our result arrays
-            self.resTrainAccuracy5.append(np.mean(trainAccuracy) * 100)
-            self.resValidAccuracy5.append(np.mean(validationAccuracy) * 100)
-            self.resTrainError5.append(stats.sem(trainAccuracy) * 100)
-            self.resValidError5.append(stats.sem(validationAccuracy) * 100)
 
     def getScore(self):
-        pass
         # select features
-        #feature_selector = SelectKBest(chi2, k=8)
-        #x_cv_train = feature_selector.fit_transform(X_train, y_train)
-        #x_cv_test = feature_selector.transform(X_test)
+        feature_selector = SelectKBest(chi2, k=self.bestK)
+        x_cv_train = feature_selector.fit_transform(self.X_train, self.y_train)
+        x_cv_test = feature_selector.transform(self.X_test)
 
         # train decision tree
-        #dt = tree.DecisionTreeClassifier(min_samples_split=530)
-        #dt.fit(x_cv_train, y_train)
-        #dt.score(x_cv_test, y_test)
+        dt = tree.DecisionTreeClassifier(min_samples_split=self.bestMinSplitParam)
+        dt.fit(x_cv_train, self.y_train)
+        self.score = dt.score(x_cv_test, self.y_test)
+
+
+    def printBestScoreAndParam(self):
+        print("\nDecision Tree\n-------------------\n" +
+              "Best K Parameter: " + str(self.bestK) + "\n"+
+              "Best min samples split parameter: " + str(self.bestMinSplitParam) + "\n" +
+              "Score: " + str(self.score) + "\n")
